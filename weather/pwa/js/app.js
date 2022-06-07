@@ -164,6 +164,9 @@ function initMap() {
         rotateControl: true,
         fullscreenControl: true
     });
+
+    
+    startGPSTracking();
 };
 
 function loadGoogleMaps() {
@@ -197,4 +200,3 @@ function updateGPSPosition(position) {
 //////////////////////////////////////////////////////
 
 loadGoogleMaps();
-startGPSTracking();
