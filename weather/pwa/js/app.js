@@ -168,7 +168,7 @@ function initMap() {
 
 function loadGoogleMaps() {
     var script = document.createElement('script');
-    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDhntRQW_8oX8Xc4eKihfU-Fv6dfdPbFE0&callback=initMap";
+    script.src = "https://maps.googleapis.com/maps/api/js?key=" + GOOGLE_MAPS_API_KEY + "&callback=initMap";
     script.async = true;
     document.head.appendChild(script);
 };
