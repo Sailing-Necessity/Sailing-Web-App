@@ -1,3 +1,4 @@
+
 function UserLocationTracker() {
     this.marker;
     this.circle;
@@ -60,6 +61,9 @@ function UserLocationTracker() {
         map.panTo(this.getPosition());
 
         this.updateTrack(pos);
+
+        // store position locally
+        storageManager.storeLastPosition(pos);
     }
 
     this.initializeMarker = function (pos) {
@@ -108,7 +112,32 @@ function UserLocationTracker() {
     }
 }
 
+function StorageManager() {
+    this.STORAGE_KEYS = {
+        LAST_POSITION: "LAST_USER_POSITION",
+    }
 
+    this.storeLastPosition = function(gMapsLatLng) {
+        localStorage.setItem(
+            this.STORAGE_KEYS.LAST_POSITION,
+            JSON.stringify(
+                gMapsLatLng.toJSON()
+            )
+        );
+    }
+
+    this.getLastPosition = function(gMapsLatLng) {
+        return JSON.parse(
+            localStorage.getItem(
+                this.STORAGE_KEYS.LAST_POSITION,
+                { // default map position
+                    lat: 43.40034,
+                    lng: -84.58715
+                }
+            )
+        );
+    }
+}
 
 
 
@@ -126,10 +155,7 @@ let map;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
-        center: {
-            lat: 43.40034,
-            lng: -84.58715
-        },
+        center: storageManager.getLastPosition(),
         zoom: 8,
         zoomControl: true,
         mapTypeControl: false,
@@ -147,28 +173,9 @@ function loadGoogleMaps() {
     document.head.appendChild(script);
 };
 
-function setUserLocation(position) {
-    // console.log("setUserLocation got position:", position);
-    // console.log(map);
 
-    // var marker = new google.maps.Marker({
-    //     position: {
-    //         lat: position.coords.latitude,
-    //         lng: position.coords.longitude
-    //     },
-    //     map: map,
-    //     title: "User Location"
-    // });
-
-    // map.setCenter(marker.position);
-
-    // console.log(marker);
-}
-
-
-let pastGPSTrack = [];
-let currentGPSPosition;
 let userLocationTracker;
+let storageManager = new StorageManager();
 
 function startGPSTracking() {
     if (navigator.geolocation) {
@@ -180,14 +187,10 @@ function startGPSTracking() {
 }
 
 function updateGPSPosition(position) {
-    currentGPSPosition = position;
-    pastGPSTrack.push(position);
 
     console.log("updateGPSPosition got position:", position);
 
     userLocationTracker.update(position);
-    setUserLocation(currentGPSPosition);
-    // this.baseMap.setUserTrack(pastGPSTrack);
 }
 
 
