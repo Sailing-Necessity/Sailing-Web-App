@@ -1,0 +1,17 @@
+#map {
+    height: 100%;
+}
+
+#version {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    text-align: center;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
