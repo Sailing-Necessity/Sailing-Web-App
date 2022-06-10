@@ -139,7 +139,22 @@ function StorageManager() {
     }
 }
 
+function WebSocketManager(url) {
+    this.websocket = new WebSocket(url);
 
+    this.websocket.onopen = function(event) {
+        console.log("WebSocket opened", event);
+    }
+
+    this.websocket.onmessage = function(event) {
+        var message = event.data;
+        console.log(message);
+    }
+
+    this.sendRequest = function(requestData) {
+        this.websocket.send(JSON.stringify(requestData));
+    }
+}
 
 
 
@@ -167,6 +182,7 @@ function initMap() {
 
     
     startGPSTracking();
+    startWebSocket();
 };
 
 function loadGoogleMaps() {
@@ -177,8 +193,6 @@ function loadGoogleMaps() {
 };
 
 
-let userLocationTracker;
-let storageManager = new StorageManager();
 
 function startGPSTracking() {
     if (navigator.geolocation) {
@@ -196,7 +210,26 @@ function updateGPSPosition(position) {
     userLocationTracker.update(position);
 }
 
+function startWebSocket() {
+    var webSocketURL = "";
+
+    socketManager = new WebSocketManager(webSocketURL);
+}
+
 
 //////////////////////////////////////////////////////
 
+let userLocationTracker;
+let storageManager = new StorageManager();
+let socketManager;
+
 loadGoogleMaps();
+
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker
+        .register("/serviceWorker.js")
+        .then(res => console.log("service worker registered"))
+        .catch(err => console.log("service worker not registered", err))
+    })
+  }
